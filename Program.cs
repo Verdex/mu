@@ -6,12 +6,32 @@ using System.Collections.Generic;
 
 namespace mu
 {
+    public class WorldEntity
+    {
+        public int Id;
+        public char Display;
+        public int X;
+        public int Y;
+        // can the mods be put on a different class or on a tuple?
+        public int XMod;
+        public int YMod;
+
+        public WorldEntity( int id, char display, int x, int y )
+        {
+            Id = id;
+            Display = display;
+            X = x;
+            Y = y;
+            XMod = 0;
+            YMod = 0;
+        }
+    }
+
     public class World
     {
-        public List<(int, char, int, int)> _es = new List<(int, char, int, int)>();
-        public char _hc;
-        public int _hx;
-        public int _hy;
+        // The _es also needs screen y modifier
+        public List<WorldEntity> _es = new List<WorldEntity>();
+        public WorldEntity _hero;
 
         private int MaxY;
         private int MaxX;
@@ -24,62 +44,72 @@ namespace mu
 
         public void AddEntity( int id, char c, int x, int y )
         {
-            _es.Add( (id, c, x, y) );
+            _es.Add( new WorldEntity(id, c, x, y) );
         }
 
         public void AddHero( char c, int x, int y )
         {
-            _hc = c;
-            _hx = x;
-            _hy = y;
+            _hero = new WorldEntity( 0, c, x, y );
+        }
+
+        public (int, int) HeroPosition()
+        {
+            return (_hero.X, _hero.Y);
         }
 
         public void MoveUp( int id )
         {
-            var (i, c, x, y) = _es.Single( e => e.Item1 == id );
-            _es.RemoveAll( e => e.Item1 == id );
-            _es.Add( (i, c, x, y - 1 ) );
+            var entity = _es.Single( e => e.Id == id );
+            entity.Y--;
         }
 
         public void MoveDown( int id )
         {
-            var (i, c, x, y) = _es.Single( e => e.Item1 == id );
-            _es.RemoveAll( e => e.Item1 == id );
-            _es.Add( (i, c, x, y + 1 ) );
+            var entity = _es.Single( e => e.Id == id );
+            entity.Y++;
         }
 
         public void MoveLeft( int id )
         {
-            var (i, c, x, y) = _es.Single( e => e.Item1 == id );
-            _es.RemoveAll( e => e.Item1 == id );
-            _es.Add( (i, c, x - 1, y  ) );
+            var entity = _es.Single( e => e.Id == id );
+            entity.X--;
         }
 
         public void MoveRight( int id )
         {
-            var (i, c, x, y) = _es.Single( e => e.Item1 == id );
-            _es.RemoveAll( e => e.Item1 == id );
-            _es.Add( (i, c, x + 1, y ) );
+            var entity = _es.Single( e => e.Id == id );
+            entity.X++;
+        }
+
+        private void RelativeHeroMoveUp()
+        {
         }
 
         public void HeroMoveUp( )
         {
-            _hy--;
+            if ( _hero.Y == 0 )
+            {
+                RelativeHeroMoveUp();
+            }
+            else
+            {
+                _hero.Y--; // need world y value and screen y value (maybe screen y modifier)
+            }
         }
 
         public void HeroMoveDown(  )
         {
-            _hy++;
+           _hero.Y++; 
         }
 
         public void HeroMoveLeft(  )
         {
-            _hx--;
+            _hero.X--;
         }
 
         public void HeroMoveRight( )
         {
-            _hx++;
+            _hero.X++;
         }
         
     }
@@ -93,11 +123,6 @@ namespace mu
             var w = new World();
             w.AddHero( '@', 0, 0 );
 
-            var sx = 0;
-            var sy = 0;
-
-            var wx = 0;
-            var wy = 0;
             var c = '\0';
             
             while ( c != 'q' )
@@ -107,7 +132,9 @@ namespace mu
                 MyClear(ConsoleColor.Black);
 
 
-                DrawLetter( w._hc, w._hx, w._hy, ConsoleColor.Cyan, ConsoleColor.Black );
+                var (hpx, hpy) = w.HeroPosition();
+
+                DrawLetter( '@', hpx, hpy, ConsoleColor.Cyan, ConsoleColor.Black );
 
                 DrawLetter( 'a', 5, 5, ConsoleColor.Blue, ConsoleColor.Black );
                 DrawLetter( 'b', 1, 1, ConsoleColor.Red, ConsoleColor.Black );
