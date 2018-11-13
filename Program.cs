@@ -52,9 +52,9 @@ namespace mu
             _hero = new WorldEntity( 0, c, x, y );
         }
 
-        public (int, int) HeroPosition()
+        public (int, int) HeroDrawPosition() 
         {
-            return (_hero.X, _hero.Y);
+            return (_hero.X + _hero.XMod, _hero.Y + _hero.YMod);
         }
 
         public void MoveUp( int id )
@@ -83,18 +83,20 @@ namespace mu
 
         private void RelativeHeroMoveUp()
         {
+            foreach( var e in _es )
+            {
+                e.YMod++;
+            }
         }
 
         public void HeroMoveUp( )
         {
-            if ( _hero.Y == 0 )
+            if ( _hero.Y + _hero.YMod == 0 )
             {
+                _hero.YMod++;
                 RelativeHeroMoveUp();
             }
-            else
-            {
-                _hero.Y--; // need world y value and screen y value (maybe screen y modifier)
-            }
+            _hero.Y--; 
         }
 
         public void HeroMoveDown(  )
@@ -122,6 +124,10 @@ namespace mu
 
             var w = new World();
             w.AddHero( '@', 0, 0 );
+            w.AddEntity( 1, 'a', 5, 5 ); 
+            w.AddEntity( 2, 'b', 1, 1 ); 
+            w.AddEntity( 3, 'c', 1, 5 ); 
+            w.AddEntity( 4, 'd', 5, 1 ); 
 
             var c = '\0';
             
@@ -132,14 +138,14 @@ namespace mu
                 MyClear(ConsoleColor.Black);
 
 
-                var (hpx, hpy) = w.HeroPosition();
+                var (hpx, hpy) = w.HeroDrawPosition();
 
                 DrawLetter( '@', hpx, hpy, ConsoleColor.Cyan, ConsoleColor.Black );
 
-                DrawLetter( 'a', 5, 5, ConsoleColor.Blue, ConsoleColor.Black );
-                DrawLetter( 'b', 1, 1, ConsoleColor.Red, ConsoleColor.Black );
-                DrawLetter( 'c', 1, 5, ConsoleColor.Green, ConsoleColor.Black );
-                DrawLetter( 'd', 5, 1, ConsoleColor.Yellow, ConsoleColor.Black );
+                foreach( var e in w._es )
+                {
+                    DrawLetter( e.Display, e.X + e.XMod, e.Y + e.YMod, ConsoleColor.Red, ConsoleColor.Black );
+                }
                 var v = Console.ReadKey(true);
                 c = v.KeyChar;
 
