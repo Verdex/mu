@@ -14,6 +14,7 @@ namespace mu
         public int Y;
         public int XMod;
         public int YMod;
+        // TODO add color
 
         public WorldEntity( int id, char display, int x, int y )
         {
@@ -56,8 +57,8 @@ namespace mu
             return (_hero.X + _hero.XMod, _hero.Y + _hero.YMod);
         }
 
-        public void MoveUp( int id )
-        {
+        public void MoveUp( int id ) // TODO instead of move up down etc have move sequences for an id
+        {                            // Will then need some sort of sleep loop to execute the sequence in
             var entity = _es.Single( e => e.Id == id );
             entity.Y--;
         }
