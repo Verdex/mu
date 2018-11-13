@@ -12,7 +12,6 @@ namespace mu
         public char Display;
         public int X;
         public int Y;
-        // can the mods be put on a different class or on a tuple?
         public int XMod;
         public int YMod;
 
@@ -27,7 +26,7 @@ namespace mu
         }
     }
 
-    public class World
+    public class World // TODO world screen view
     {
         // The _es also needs screen y modifier
         public List<WorldEntity> _es = new List<WorldEntity>();
@@ -38,8 +37,8 @@ namespace mu
 
         public World()
         {
-            MaxY = Console.WindowHeight; // TODO this changes and cant be static like this
-            MaxX = Console.WindowWidth;
+            MaxY = Console.WindowHeight - 1; // TODO this changes and cant be static like this
+            MaxX = Console.WindowWidth - 1;
         }
 
         public void AddEntity( int id, char c, int x, int y )
@@ -89,6 +88,30 @@ namespace mu
             }
         }
 
+        private void RelativeHeroMoveDown()
+        {
+            foreach( var e in _es )
+            {
+                e.YMod--;
+            }
+        }
+
+        private void RelativeHeroMoveRight()
+        {
+            foreach( var e in _es )
+            {
+                e.XMod--;
+            }
+        }
+
+        private void RelativeHeroMoveLeft()
+        {
+            foreach( var e in _es )
+            {
+                e.XMod++;
+            }
+        }
+
         public void HeroMoveUp( )
         {
             if ( _hero.Y + _hero.YMod == 0 )
@@ -101,16 +124,31 @@ namespace mu
 
         public void HeroMoveDown(  )
         {
+            if ( _hero.Y + _hero.YMod == MaxY )
+            {
+                _hero.YMod--;
+                RelativeHeroMoveDown();
+            }
            _hero.Y++; 
         }
 
         public void HeroMoveLeft(  )
         {
+            if ( _hero.X + _hero.XMod == 0 )
+            {
+                _hero.XMod++;
+                RelativeHeroMoveLeft();
+            }
             _hero.X--;
         }
 
         public void HeroMoveRight( )
         {
+            if ( _hero.X + _hero.XMod == MaxX )
+            {
+                _hero.XMod--;
+                RelativeHeroMoveRight();
+            }
             _hero.X++;
         }
         
@@ -144,7 +182,13 @@ namespace mu
 
                 foreach( var e in w._es )
                 {
-                    DrawLetter( e.Display, e.X + e.XMod, e.Y + e.YMod, ConsoleColor.Red, ConsoleColor.Black );
+                    var x = e.X + e.XMod;
+                    var y = e.Y + e.YMod;
+                    if (  x <= Console.WindowWidth - 1 && x >= 0 
+                         && y <= Console.WindowHeight - 1 && y >= 0 )
+                    {
+                        DrawLetter( e.Display, e.X + e.XMod, e.Y + e.YMod, ConsoleColor.Red, ConsoleColor.Black );
+                    }
                 }
                 var v = Console.ReadKey(true);
                 c = v.KeyChar;
