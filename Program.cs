@@ -6,6 +6,20 @@ using System.Collections.Generic;
 
 namespace mu
 {
+    public enum WorldDirection
+    {
+        Up,
+        Down,
+        Right,
+        Left
+    }
+
+    public class WorldMove
+    {
+        public WorldDirection Direction;
+        public int Steps;
+    }
+
     public class WorldEntity
     {
         public int Id;
@@ -29,8 +43,7 @@ namespace mu
 
     public class World // TODO world screen view
     {
-        // The _es also needs screen y modifier
-        public List<WorldEntity> _es = new List<WorldEntity>();
+        public Dictionary<int, WorldEntity> _es = new Dictionary<int, WorldEntity>(); 
         public WorldEntity _hero;
 
         private int MaxY;
@@ -44,7 +57,7 @@ namespace mu
 
         public void AddEntity( int id, char c, int x, int y )
         {
-            _es.Add( new WorldEntity(id, c, x, y) );
+            _es.Add( id, new WorldEntity(id, c, x, y) );
         }
 
         public void AddHero( char c, int x, int y )
@@ -57,60 +70,33 @@ namespace mu
             return (_hero.X + _hero.XMod, _hero.Y + _hero.YMod);
         }
 
+        public void Move( IEnumerable<(int id, IEnumerable<WorldMove> moves)> ms )
+        {
+                        
+        }
+
         public void MoveUp( int id ) // TODO instead of move up down etc have move sequences for an id
         {                            // Will then need some sort of sleep loop to execute the sequence in
-            var entity = _es.Single( e => e.Id == id );
+            var entity = _es[id];
             entity.Y--;
         }
 
         public void MoveDown( int id )
         {
-            var entity = _es.Single( e => e.Id == id );
+            var entity = _es[id];
             entity.Y++;
         }
 
         public void MoveLeft( int id )
         {
-            var entity = _es.Single( e => e.Id == id );
+            var entity = _es[id];
             entity.X--;
         }
 
         public void MoveRight( int id )
         {
-            var entity = _es.Single( e => e.Id == id );
+            var entity = _es[id];
             entity.X++;
-        }
-
-        private void RelativeHeroMoveUp()
-        {
-            foreach( var e in _es )
-            {
-                e.YMod++;
-            }
-        }
-
-        private void RelativeHeroMoveDown()
-        {
-            foreach( var e in _es )
-            {
-                e.YMod--;
-            }
-        }
-
-        private void RelativeHeroMoveRight()
-        {
-            foreach( var e in _es )
-            {
-                e.XMod--;
-            }
-        }
-
-        private void RelativeHeroMoveLeft()
-        {
-            foreach( var e in _es )
-            {
-                e.XMod++;
-            }
         }
 
         public void HeroMoveUp( )
@@ -153,6 +139,38 @@ namespace mu
             _hero.X++;
         }
         
+        private void RelativeHeroMoveUp()
+        {
+            foreach( var e in _es )
+            {
+                e.Value.YMod++;
+            }
+        }
+
+        private void RelativeHeroMoveDown()
+        {
+            foreach( var e in _es )
+            {
+                e.Value.YMod--;
+            }
+        }
+
+        private void RelativeHeroMoveRight()
+        {
+            foreach( var e in _es )
+            {
+                e.Value.XMod--;
+            }
+        }
+
+        private void RelativeHeroMoveLeft()
+        {
+            foreach( var e in _es )
+            {
+                e.Value.XMod++;
+            }
+        }
+
     }
 
     public static class Program
@@ -183,12 +201,12 @@ namespace mu
 
                 foreach( var e in w._es )
                 {
-                    var x = e.X + e.XMod;
-                    var y = e.Y + e.YMod;
+                    var x = e.Value.X + e.Value.XMod;
+                    var y = e.Value.Y + e.Value.YMod;
                     if (  x <= Console.WindowWidth - 1 && x >= 0 
                          && y <= Console.WindowHeight - 1 && y >= 0 )
                     {
-                        DrawLetter( e.Display, e.X + e.XMod, e.Y + e.YMod, ConsoleColor.Red, ConsoleColor.Black );
+                        DrawLetter( e.Value.Display, e.Value.X + e.Value.XMod, e.Value.Y + e.Value.YMod, ConsoleColor.Red, ConsoleColor.Black );
                     }
                 }
                 var v = Console.ReadKey(true);
