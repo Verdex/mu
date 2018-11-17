@@ -6,7 +6,7 @@ test : Test.exe
 	mono Test.exe
 
 Test.exe : 
-	csc tests.cs -out:Test.exe -t:exe
+	csc Square.cs Tests.cs -out:Test.exe -t:exe
 
 clean : 
 	rm -rf *.exe
