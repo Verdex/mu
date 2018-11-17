@@ -78,14 +78,16 @@ namespace mu
             return ret;
         }
 
-        public Grid<T> SubSquare( int centerRow, int centerCol, int radius )
+        public Grid<T> SubGrid( int centerRow, int centerCol, int radius )
         {
             return null;
         }
 
-        public Grid<T> SubSquare( int startRow, int startCol, int rowLength, int colLength)
+        public Grid<(int origRow, int origCol, T origValue)> SubGrid( int startRow, int startCol, int rowLength, int colLength)
         {
-            return null;
+            var ret = new Grid<(int, int, T)>( rowLength, colLength );
+            Transfer( (r, c) => (startRow + r, startCol + c, this[startRow + r, startCol + c]), ret );
+            return ret;
         }
         
         private static void Transfer<S>( Func<int, int, S> src, Grid<S> dest )
@@ -99,7 +101,6 @@ namespace mu
             }
         }
 
-        // sub square
         // all cells between two cells (line)
         // sub "triangle" subsquare but only take a specific angle of cells
         //          with some facing
