@@ -102,7 +102,5 @@ namespace mu
         // all cells between two cells (line)
         // sub "triangle" subsquare but only take a specific angle of cells
         //          with some facing
-        // distance between squares
-        // distance squared between squares
     }
 }

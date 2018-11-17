@@ -1,9 +1,11 @@
 
+using System;
+
 namespace mu
 {
     public class Distance
     {
-        public decimal Value;
+        public decimal Value { get; }
 
         public Distance( decimal v )
         {
@@ -13,7 +15,7 @@ namespace mu
 
     public class DistanceSquared
     {
-        public decimal Value;
+        public decimal Value { get; }
 
         public DistanceSquared( decimal v )
         {
@@ -23,9 +25,7 @@ namespace mu
 
     public static class DistUtil
     {
-        private static double Sqrt( double x ) => Math.Sqrt( x );
-        private static double Sqrt( decimal x ) => Math.Sqrt( (double)x );
-        private static double Sq( double x ) => Math.Pow( x, 2 );
+        private static decimal Sqrt( decimal x ) => (decimal)Math.Sqrt( (double)x );
         private static decimal Sq( decimal x ) => x * x;
 
         public static Distance Dist( int x1, int y1, int x2, int y2 )
@@ -38,7 +38,7 @@ namespace mu
         public static bool Gt( this Distance t, Distance dist ) => t.Value > dist.Value;
 
         public static bool Lt( this Distance t, DistanceSquared distSq ) => t.Value < Sqrt(distSq.Value);
-        public static bool Gt( this Distance t, DistanceSquared distSq ) => t.Value > Sqrt(dist.Value);
+        public static bool Gt( this Distance t, DistanceSquared distSq ) => t.Value > Sqrt(distSq.Value);
 
         public static bool Lt( this DistanceSquared t, Distance dist ) => Sqrt(t.Value) < dist.Value;
         public static bool Gt( this DistanceSquared t, Distance dist ) => Sqrt(t.Value) > dist.Value;

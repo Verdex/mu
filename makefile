@@ -6,7 +6,7 @@ test : Test.exe
 	mono Test.exe
 
 Test.exe : 
-	csc Grid.cs Tests.cs -out:Test.exe -t:exe
+	csc Grid.cs Location.cs Distance.cs Tests.cs -out:Test.exe -t:exe
 
 clean : 
 	rm -rf *.exe
