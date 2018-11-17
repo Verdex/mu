@@ -16,11 +16,11 @@ namespace mu
         }
     }
 
-    public class DistanceGridd
+    public class DistanceSquared
     {
         public decimal Value;
 
-        public DistanceGridd( decimal v )
+        public DistanceSquared( decimal v )
         {
             Value = v;
         }
@@ -78,13 +78,30 @@ namespace mu
             return ret;
         }
 
-        public Grid<T> SubGrid( int centerRow, int centerCol, int radius )
+        public Grid<(int origRow, int origCol, T origValue)> SubGridRadius( int centerRow, int centerCol, int radius )
         {
-            return null;
+            var length = (radius * 2) + 1;
+            return SubGrid( centerRow - radius, centerCol - radius, length, length );
         }
 
         public Grid<(int origRow, int origCol, T origValue)> SubGrid( int startRow, int startCol, int rowLength, int colLength)
         {
+            if ( startRow < 0 )
+            {
+                startRow = 0;
+            }
+            if ( startCol < 0 )
+            {
+                startCol = 0;
+            }
+            if ( startRow + rowLength > RowCount )
+            {
+                rowLength = RowCount - startRow;
+            }
+            if ( startCol + colLength > ColCount )
+            {
+                colLength = ColCount - startCol;
+            }
             var ret = new Grid<(int, int, T)>( rowLength, colLength );
             Transfer( (r, c) => (startRow + r, startCol + c, this[startRow + r, startCol + c]), ret );
             return ret;

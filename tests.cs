@@ -117,6 +117,173 @@ namespace mu
                 Check( "2, 2; row", subG[2, 2].origRow == 4 );
                 Check( "2, 2; col", subG[2, 2].origCol == 4 );
             });
+
+            Test( "SubGrid should return grid when asked for larger grid", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGrid( -1, -1, 4, 4 );
+                var o = subG.CellsWithIndex().ToList();
+                Check( "Length", o.Count == 4 );
+                Check( "0, 0", subG[0,0].origValue == 1 );
+                Check( "0, 1", subG[0,1].origValue == 2 );
+                Check( "1, 0", subG[1,0].origValue == 3 );
+                Check( "1, 1", subG[1,1].origValue == 4 );
+            });
+
+            Test( "SubGrid should handle negative row and col", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGrid( -1, -1, 1, 1 );
+                var o = subG.CellsWithIndex().ToList();
+                Check( "Length", o.Count == 1 );
+                Check( "0, 0", subG[0,0].origValue == 1 );
+            });
+
+            Test( "SubGrid should handle negative row and positive  col", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGrid( -1, 0, 1, 1 );
+                var o = subG.CellsWithIndex().ToList();
+                Check( "Length", o.Count == 1 );
+                Check( "0, 0", subG[0,0].origValue == 1 );
+            });
+
+            Test( "SubGrid should handle positive row and negative col", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGrid( 0, -1, 1, 1 );
+                var o = subG.CellsWithIndex().ToList();
+                Check( "Length", o.Count == 1 );
+                Check( "0, 0", subG[0,0].origValue == 1 );
+            });
+
+            Test( "SubGrid should handle rowLength and colLength overflow", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGrid( 1, 1, 2, 2 );
+                var o = subG.CellsWithIndex().ToList();
+                Check( "Length", o.Count == 1 );
+                Check( "0, 0", subG[0,0].origValue == 4 );
+            });
+
+            Test( "SubGridRadius should get correct values at 0,0", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGridRadius( 0, 0, 0 );
+                var o = subG.CellsWithIndex().Single();
+                Check( "row", o.row == 0 );
+                Check( "col", o.col == 0 );
+                Check( "orig row", o.value.origRow == 0 );
+                Check( "orig col", o.value.origCol == 0 );
+                Check( "orig value", o.value.origValue == 1 );
+            });
+
+            Test( "SubGridRadius should get correct values at 0,1", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGridRadius( 0, 1, 0 );
+                var o = subG.CellsWithIndex().Single();
+                Check( "row", o.row == 0 );
+                Check( "col", o.col == 0 );
+                Check( "orig row", o.value.origRow == 0 );
+                Check( "orig col", o.value.origCol == 1 );
+                Check( "orig value", o.value.origValue == 2 );
+            });
+
+            Test( "SubGridRadius should get correct values at 1,0", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGridRadius( 1, 0, 0 );
+                var o = subG.CellsWithIndex().Single();
+                Check( "row", o.row == 0 );
+                Check( "col", o.col == 0 );
+                Check( "orig row", o.value.origRow == 1 );
+                Check( "orig col", o.value.origCol == 0 );
+                Check( "orig value", o.value.origValue == 3 );
+            });
+
+            Test( "SubGridRadius should get correct values at 1,1", () =>
+            {
+                var g = new Grid<int>( 2, 2, 77 );
+                g[0,0] = 1;
+                g[0,1] = 2;
+                g[1,0] = 3;
+                g[1,1] = 4;
+                var subG = g.SubGridRadius( 1, 1, 0 );
+                var o = subG.CellsWithIndex().Single();
+                Check( "row", o.row == 0 );
+                Check( "col", o.col == 0 );
+                Check( "orig row", o.value.origRow == 1 );
+                Check( "orig col", o.value.origCol == 1 );
+                Check( "orig value", o.value.origValue == 4 );
+            });
+
+            Test( "SubGridRadius should get correct count for radius 0", () =>
+            {
+                var g = new Grid<int>( 7, 7, 77 );
+                var count = g.SubGridRadius(3, 3, 0).Cells().Count();
+                Check( "Count", count == 1 );
+            });
+
+            Test( "SubGridRadius should get correct count for radius 1", () =>
+            {
+                var g = new Grid<int>( 7, 7, 77 );
+                var count = g.SubGridRadius(3, 3, 1).Cells().Count();
+                Check( "Count", count == 9 );
+            });
+
+            Test( "SubGridRadius should get correct count for radius 2", () =>
+            {
+                var g = new Grid<int>( 7, 7, 77 );
+                var count = g.SubGridRadius(3, 3, 2).Cells().Count();
+                Check( "Count", count == 25 );
+            });
+
+            Test( "SubGridRadius should get correct count for radius 3", () =>
+            {
+                var g = new Grid<int>( 7, 7, 77 );
+                var count = g.SubGridRadius(3, 3, 3).Cells().Count();
+                Check( "Count", count == 49 );
+            });
+
+            Test( "SubGridRadius should get correct count for radius 4", () =>
+            {
+                var g = new Grid<int>( 7, 7, 77 );
+                var count = g.SubGridRadius(3, 3, 4).Cells().Count();
+                Check( "Count", count == 49 );
+            });
         }
 
         private static string _name;
