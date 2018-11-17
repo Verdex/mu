@@ -6,25 +6,6 @@ using System.Collections.Generic;
 
 namespace mu
 {
-    public class Distance
-    {
-        public decimal Value;
-
-        public Distance( decimal v )
-        {
-            Value = v;
-        }
-    }
-
-    public class DistanceSquared
-    {
-        public decimal Value;
-
-        public DistanceSquared( decimal v )
-        {
-            Value = v;
-        }
-    }
 
     public class Grid<T>
     {
