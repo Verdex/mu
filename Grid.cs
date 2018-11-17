@@ -16,28 +16,28 @@ namespace mu
         }
     }
 
-    public class DistanceSquared
+    public class DistanceGridd
     {
         public decimal Value;
 
-        public DistanceSquared( decimal v )
+        public DistanceGridd( decimal v )
         {
             Value = v;
         }
     }
 
-    public class Square<T>
+    public class Grid<T>
     {
         private readonly T[,] _cells;
 
-        private Square( int rowCount, int colCount )
+        private Grid( int rowCount, int colCount )
         {
             _cells = new T[rowCount, colCount];
             RowCount = rowCount;
             ColCount = colCount;
         }
 
-        public Square( int rowCount, int colCount, T init )
+        public Grid( int rowCount, int colCount, T init )
             :this( rowCount, colCount )
         {
             Transfer( (r,c) => init, this );
@@ -60,19 +60,35 @@ namespace mu
             }
         }
 
-        public Square<S> Map<S>( Func<T, S> f )
+        public IEnumerable<(int row, int col, T value)> CellsWithIndex()
         {
-            var ret = new Square<S>( RowCount, ColCount );
+            for( var r = 0; r < RowCount; r++ )
+            {
+                for( var c = 0; c < ColCount; c++ )
+                {
+                    yield return (r, c, this[r,c]);
+                }
+            }
+        }
+
+        public Grid<S> Map<S>( Func<T, S> f )
+        {
+            var ret = new Grid<S>( RowCount, ColCount );
             Transfer( (r, c) => f( this[r,c] ), ret );
             return ret;
         }
 
-        public Square<T> SubSquare( int centerRow, int centerCol, int radius )
+        public Grid<T> SubSquare( int centerRow, int centerCol, int radius )
+        {
+            return null;
+        }
+
+        public Grid<T> SubSquare( int startRow, int startCol, int rowLength, int colLength)
         {
             return null;
         }
         
-        private static void Transfer<S>( Func<int, int, S> src, Square<S> dest )
+        private static void Transfer<S>( Func<int, int, S> src, Grid<S> dest )
         {
             for(var r = 0; r < dest.RowCount; r++)
             {
