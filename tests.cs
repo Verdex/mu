@@ -3,6 +3,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using static mu.LocUtil;
+
 namespace mu
 {
     public static class Tests 
@@ -193,7 +195,7 @@ namespace mu
                 g[0,1] = 2;
                 g[1,0] = 3;
                 g[1,1] = 4;
-                var subG = g.SubGridRadius( 0, 0, 0 );
+                var subG = g.SubGridRadius( ToLoc( 0, 0 ), 0 );
                 var o = subG.CellsWithIndex().Single();
                 Check( "row", o.row == 0 );
                 Check( "col", o.col == 0 );
@@ -209,7 +211,7 @@ namespace mu
                 g[0,1] = 2;
                 g[1,0] = 3;
                 g[1,1] = 4;
-                var subG = g.SubGridRadius( 0, 1, 0 );
+                var subG = g.SubGridRadius( ToLoc( 0, 1 ), 0 );
                 var o = subG.CellsWithIndex().Single();
                 Check( "row", o.row == 0 );
                 Check( "col", o.col == 0 );
@@ -225,7 +227,7 @@ namespace mu
                 g[0,1] = 2;
                 g[1,0] = 3;
                 g[1,1] = 4;
-                var subG = g.SubGridRadius( 1, 0, 0 );
+                var subG = g.SubGridRadius( ToLoc( 1, 0 ), 0 );
                 var o = subG.CellsWithIndex().Single();
                 Check( "row", o.row == 0 );
                 Check( "col", o.col == 0 );
@@ -241,7 +243,7 @@ namespace mu
                 g[0,1] = 2;
                 g[1,0] = 3;
                 g[1,1] = 4;
-                var subG = g.SubGridRadius( 1, 1, 0 );
+                var subG = g.SubGridRadius( ToLoc( 1, 1 ), 0 );
                 var o = subG.CellsWithIndex().Single();
                 Check( "row", o.row == 0 );
                 Check( "col", o.col == 0 );
@@ -253,35 +255,35 @@ namespace mu
             Test( "SubGridRadius should get correct count for radius 0", () =>
             {
                 var g = new Grid<int>( 7, 7, 77 );
-                var count = g.SubGridRadius(3, 3, 0).Cells().Count();
+                var count = g.SubGridRadius( ToLoc( 3, 3 ), 0).Cells().Count();
                 Check( "Count", count == 1 );
             });
 
             Test( "SubGridRadius should get correct count for radius 1", () =>
             {
                 var g = new Grid<int>( 7, 7, 77 );
-                var count = g.SubGridRadius(3, 3, 1).Cells().Count();
+                var count = g.SubGridRadius( ToLoc( 3, 3 ), 1).Cells().Count();
                 Check( "Count", count == 9 );
             });
 
             Test( "SubGridRadius should get correct count for radius 2", () =>
             {
                 var g = new Grid<int>( 7, 7, 77 );
-                var count = g.SubGridRadius(3, 3, 2).Cells().Count();
+                var count = g.SubGridRadius( ToLoc( 3, 3 ), 2).Cells().Count();
                 Check( "Count", count == 25 );
             });
 
             Test( "SubGridRadius should get correct count for radius 3", () =>
             {
                 var g = new Grid<int>( 7, 7, 77 );
-                var count = g.SubGridRadius(3, 3, 3).Cells().Count();
+                var count = g.SubGridRadius( ToLoc( 3, 3 ), 3).Cells().Count();
                 Check( "Count", count == 49 );
             });
 
             Test( "SubGridRadius should get correct count for radius 4", () =>
             {
                 var g = new Grid<int>( 7, 7, 77 );
-                var count = g.SubGridRadius(3, 3, 4).Cells().Count();
+                var count = g.SubGridRadius( ToLoc( 3, 3 ), 4).Cells().Count();
                 Check( "Count", count == 49 );
             });
         }

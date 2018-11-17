@@ -59,9 +59,10 @@ namespace mu
             return ret;
         }
 
-        public Grid<(int origRow, int origCol, T origValue)> SubGridRadius( int centerRow, int centerCol, int radius )
+        public Grid<(int origRow, int origCol, T origValue)> SubGridRadius( ILoc center, int radius )
         {
             var length = (radius * 2) + 1;
+            var (centerRow, centerCol) = center.ToRowCol();
             return SubGrid( centerRow - radius, centerCol - radius, length, length );
         }
 

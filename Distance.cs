@@ -34,6 +34,12 @@ namespace mu
         public static DistanceSquared DistSq( int x1, int y1, int x2, int y2 )
             => new DistanceSquared( Sq( x2 - x1 ) + Sq( y2 - y1 ) );
 
+        public static Distance Dist( this ILoc loc1, ILoc loc2 )
+            => new Distance( (decimal)Sqrt( Sq( loc2.X - loc1.X ) + Sq( loc2.Y - loc1.Y ) ) );
+
+        public static DistanceSquared DistSq( this ILoc loc1, ILoc loc2 )
+            => new DistanceSquared( Sq( loc2.X - loc1.X ) + Sq( loc2.Y - loc1.Y ) );
+
         public static bool Lt( this Distance t, Distance dist ) => t.Value < dist.Value;
         public static bool Gt( this Distance t, Distance dist ) => t.Value > dist.Value;
 

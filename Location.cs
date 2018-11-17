@@ -1,35 +1,36 @@
 
 namespace mu
 {
-    public class Loc
+    public interface ILoc
     {
-        public int X { get; }
-        public int Y { get; }
+        int X { get; } 
+        int Y { get; }
+        (int row, int col) ToRowCol();
+    }
+
+    public interface IMutLoc
+    {
+        int X { get; set; }
+        int Y { get; set; }
+        (int row, int col) ToRowCol();
+    }
+
+    public class Loc : ILoc, IMutLoc
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
 
         public Loc( int x, int y )
         {
             X = x;
             Y = y;
         }
-    }
 
-    public class MutLoc
-    {
-        public int X;
-        public int Y;
-
-        public MutLoc( int x, int y )
-        {
-            X = x;
-            Y = y;
-        }
+        public (int row, int col) ToRowCol() => (Y, X);
     }
 
     public static class LocUtil
     {
-        public static Loc ToLoc( this MutLoc l ) => new Loc( l.X, l.Y );
         public static Loc ToLoc( int row, int col ) => new Loc( col, row );
-        public static MutLoc ToMutLoc( this Loc l ) => new MutLoc( l.X, l.Y );
-        public static MutLoc ToMutLoc( int row, int col ) => new MutLoc( col, row );
     }
 }
