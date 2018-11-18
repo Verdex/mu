@@ -88,6 +88,8 @@ namespace mu
             Transfer( (r, c) => (startRow + r, startCol + c, this[startRow + r, startCol + c]), ret );
             return ret;
         }
+
+        //public IEnumerable<(int row, int col, T value)> Triangle( ILoc center, direction d, angle a )
         
         private static void Transfer<S>( Func<int, int, S> src, Grid<S> dest )
         {
