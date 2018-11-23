@@ -286,6 +286,14 @@ namespace mu
                 var count = g.SubGridRadius( ToLoc( 3, 3 ), 4).Cells().Count();
                 Check( "Count", count == 49 );
             });
+
+            Test( "Line should get horizontal moving forward", () =>
+            {
+            });
+
+            Test( "Line should get horizontal moving backward", () =>
+            {
+            });
         }
 
         private static string _name;

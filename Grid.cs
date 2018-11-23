@@ -91,8 +91,14 @@ namespace mu
 
         //public IEnumerable<(int row, int col, T value)> Triangle( ILoc center, direction d, angle a )
 
-        public IEnumerable<(int row, int col, t value)> Line( ILoc cell1, ILoc cell2 )
+        public IEnumerable<(int row, int col, T value)> Line( ILoc cell1, ILoc cell2 )
         {
+            (int row, int col) CoordToRowCol( int x, decimal y )
+            {
+                var l = new Loc( x, (int)Decimal.Floor( y ) );
+                return l.ToRowCol();
+            }
+
             decimal GetSlope( ILoc c1, ILoc c2 )
             {
                 var rise = cell2.Y - cell1.Y;
@@ -100,15 +106,42 @@ namespace mu
                 return rise / run; // TODO infinity
             }
 
-            var slope = GetSlope( cell1, cell2 );
-
-            // y = m x + b
             // b = y - m x 
+            decimal YIntercept( ILoc loc, decimal m ) => loc.Y - ( m * loc.X );
 
-            var yInterceptAtZero = cell2.Y - ( slope * cell2.X );
-    
-            // TODO start at x1 and then move to x2
+            IEnumerable<(int x, decimal y)> Ys(decimal m, decimal yIntercept, int x1, int x2)
+            {
+                var l = x1 < x2 ? x1 : x2; 
+                var h = x1 >= x2 ? x1 : x2; 
+                // TODO equal case
+                var x = l;
+                while( x <= h )
+                {
+                    // y = m x + b
+                    yield return (x, m * x + yIntercept);
+                }
+            }
+
+            var slope = GetSlope( cell1, cell2 );
+            var b = YIntercept( cell2, slope );
             
+            var ys = Ys( slope, b, cell1.X, cell2.X ).ToList();
+
+            foreach( var ( f, s ) in ys.Zip( ys.Skip( 1 ), (i, k) => (i, k) ) )
+            {
+                if ( Decimal.Floor( f.y ) == Decimal.Floor( s.y ) )
+                {
+                    var (row, col) = CoordToRowCol( f.x, f.y );
+                    yield return (row, col, this[row, col]);  
+                }
+                else
+                {
+                    var (row1, col1) = CoordToRowCol( f.x, f.y );
+                    yield return (row1, col1, this[row1, col1]);  
+                    var (row2, col2) = CoordToRowCol( s.x, s.y );
+                    yield return (row2, col2, this[row2, col2]);  
+                }
+            }
         }
         
         private static void Transfer<S>( Func<int, int, S> src, Grid<S> dest )
