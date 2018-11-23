@@ -90,6 +90,16 @@ namespace mu
         }
 
         //public IEnumerable<(int row, int col, T value)> Triangle( ILoc center, direction d, angle a )
+
+        public IEnumerable<(int row, int col, t value)> Line( ILoc cell1, ILoc cell2 )
+        {
+            // y = m x + b
+            // 
+
+            var rise = cell2.Y - cell1.Y;
+            var run = cell2.X - cell1.X;
+            var slope = rise / run; // TODO infinity
+        }
         
         private static void Transfer<S>( Func<int, int, S> src, Grid<S> dest )
         {
