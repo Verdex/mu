@@ -122,6 +122,13 @@ namespace mu
                 }
             }
 
+            if ( cell1.X == cell2.X && cell1.Y == cell2.Y )
+            {
+                var (row, col) = cell1.ToRowCol();
+                yield return (row, col, this[row, col]);
+                yield break;
+            }
+
             var slope = GetSlope( cell1, cell2 );
             var b = YIntercept( cell2, slope );
             
