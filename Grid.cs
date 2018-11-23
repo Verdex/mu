@@ -93,12 +93,22 @@ namespace mu
 
         public IEnumerable<(int row, int col, t value)> Line( ILoc cell1, ILoc cell2 )
         {
-            // y = m x + b
-            // 
+            decimal GetSlope( ILoc c1, ILoc c2 )
+            {
+                var rise = cell2.Y - cell1.Y;
+                var run = cell2.X - cell1.X;
+                return rise / run; // TODO infinity
+            }
 
-            var rise = cell2.Y - cell1.Y;
-            var run = cell2.X - cell1.X;
-            var slope = rise / run; // TODO infinity
+            var slope = GetSlope( cell1, cell2 );
+
+            // y = m x + b
+            // b = y - m x 
+
+            var yInterceptAtZero = cell2.Y - ( slope * cell2.X );
+    
+            // TODO start at x1 and then move to x2
+            
         }
         
         private static void Transfer<S>( Func<int, int, S> src, Grid<S> dest )
