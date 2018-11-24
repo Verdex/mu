@@ -93,6 +93,13 @@ namespace mu
 
         public IEnumerable<(int row, int col, T value)> Line( ILoc cell1, ILoc cell2 )
         {
+            (int high, int low) HighLow( int v1, int v2 ) 
+            {
+                var l = v1 < v2 ? v1 : v2; 
+                var h = v1 >= v2 ? v1 : v2; 
+                return (h, l);
+            }
+
             (int row, int col) CoordToRowCol( int x, decimal y )
             {
                 var l = new Loc( x, (int)Decimal.Floor( y ) );
@@ -103,7 +110,7 @@ namespace mu
             {
                 decimal rise = cell2.Y - cell1.Y;
                 decimal run = cell2.X - cell1.X;
-                return rise / run; // TODO infinity
+                return rise / run; 
             }
 
             // b = y - m x 
@@ -111,9 +118,7 @@ namespace mu
 
             IEnumerable<(int x, decimal y)> Ys(decimal m, decimal yIntercept, int x1, int x2)
             {
-                var l = x1 < x2 ? x1 : x2; 
-                var h = x1 >= x2 ? x1 : x2; 
-                // TODO equal case
+                var (h, l) = HighLow( x1, x2 );
                 var x = l;
                 while( x <= h )
                 {
@@ -132,7 +137,15 @@ namespace mu
 
             if ( cell1.X == cell2.X )
             {
-            //TODO go through each Y value
+                var (h, l) = HighLow( cell1.Y, cell2.Y );
+                var y = l;
+                while ( y <= h )
+                {
+                    var (row, col) = CoordToRowCol( cell1.X, y ); 
+                    yield return (row, col, this[row, col]);
+                    y++;
+                }
+                yield break;
             }
 
             var slope = GetSlope( cell1, cell2 );
