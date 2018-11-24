@@ -130,6 +130,11 @@ namespace mu
                 yield break;
             }
 
+            if ( cell1.X == cell2.X )
+            {
+            //TODO go through each Y value
+            }
+
             var slope = GetSlope( cell1, cell2 );
             var b = YIntercept( cell2, slope );
             
