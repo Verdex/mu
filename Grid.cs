@@ -6,9 +6,14 @@ using System.Collections.Generic;
 
 namespace mu
 {
-
     public class Grid<T>
     {
+        private static void D(string s)
+        {
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine( s );
+        }
         private readonly T[,] _cells;
 
         private Grid( int rowCount, int colCount )
@@ -91,6 +96,77 @@ namespace mu
 
         //public IEnumerable<(int row, int col, T value)> Triangle( ILoc center, direction d, angle a )
 
+        public IEnumerable<(int row, int col, T value)> Line2( ILoc loc1, ILoc loc2 )
+        {
+            int Floor( decimal d ) => (int)Decimal.Floor( d );
+
+            (int high, int low) HighLow( int v1, int v2 ) 
+            {
+                var l = v1 < v2 ? v1 : v2; 
+                var h = v1 >= v2 ? v1 : v2; 
+                return (h, l);
+            }
+
+            (int row, int col) CoordToRowCol( int x, decimal y )
+            {
+                var l = new Loc( x, (int)Decimal.Floor( y ) );
+                return l.ToRowCol();
+            }
+
+            decimal GetSlope( ILoc c1, ILoc c2 )
+            {
+                decimal rise = c2.Y - c1.Y;
+                decimal run = c2.X - c1.X;
+                return rise / run; 
+            }
+
+            // b = y - m x 
+            decimal YIntercept( ILoc loc, decimal m ) => loc.Y - ( m * loc.X );
+
+            IEnumerable<(int x, int y)> Coords(decimal m, decimal yIntercept, int x1, int x2)
+            {
+                var (h, l) = HighLow( x1, x2 );
+                decimal x = l;
+                while( x <= h )
+                {
+                    // y = m x + b
+                    yield return (Floor(x), Floor(m * x + yIntercept));
+                    x+=0.1m;
+                }
+            }
+
+            if ( loc1.X == loc2.X && loc1.Y == loc2.Y )
+            {
+                var (row, col) = loc1.ToRowCol();
+                yield return (row, col, this[row, col]);
+                yield break;
+            }
+
+            if ( loc1.X == loc2.X )
+            {
+                var (h, l) = HighLow( loc1.Y, loc2.Y );
+                var y = l;
+                while ( y <= h )
+                {
+                    var (row, col) = CoordToRowCol( loc1.X, y ); 
+                    yield return (row, col, this[row, col]);
+                    y++;
+                }
+                yield break;
+            }
+
+            var slope = GetSlope( loc1, loc2 );
+            var b = YIntercept( loc2, slope );
+            
+            var coords = Coords( slope, b, loc1.X, loc2.X ).ToList();
+
+            foreach( var (x, y) in coords )
+            {
+                var (row, col) = CoordToRowCol( x, y );
+                yield return ( row, col, this[row, col] );
+            }
+        }
+
         public IEnumerable<(int row, int col, T value)> Line( ILoc cell1, ILoc cell2 )
         {
             (int high, int low) HighLow( int v1, int v2 ) 
@@ -108,8 +184,8 @@ namespace mu
 
             decimal GetSlope( ILoc c1, ILoc c2 )
             {
-                decimal rise = cell2.Y - cell1.Y;
-                decimal run = cell2.X - cell1.X;
+                decimal rise = c2.Y - c1.Y;
+                decimal run = c2.X - c1.X;
                 return rise / run; 
             }
 
@@ -158,13 +234,16 @@ namespace mu
                 if ( Decimal.Floor( f.y ) == Decimal.Floor( s.y ) )
                 {
                     var (row, col) = CoordToRowCol( f.x, f.y );
+                    D( $"single {row} {col}" );
                     yield return (row, col, this[row, col]);  
                 }
                 else
                 {
                     var (row1, col1) = CoordToRowCol( f.x, f.y );
+                    D( $"double {row1} {col1}" );
                     yield return (row1, col1, this[row1, col1]);  
                     var (row2, col2) = CoordToRowCol( s.x, s.y );
+                    D( $"double {row2} {col2}" );
                     yield return (row2, col2, this[row2, col2]);  
                 }
             }
