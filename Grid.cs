@@ -101,8 +101,8 @@ namespace mu
 
             decimal GetSlope( ILoc c1, ILoc c2 )
             {
-                var rise = cell2.Y - cell1.Y;
-                var run = cell2.X - cell1.X;
+                decimal rise = cell2.Y - cell1.Y;
+                decimal run = cell2.X - cell1.X;
                 return rise / run; // TODO infinity
             }
 
@@ -119,6 +119,7 @@ namespace mu
                 {
                     // y = m x + b
                     yield return (x, m * x + yIntercept);
+                    x++;
                 }
             }
 

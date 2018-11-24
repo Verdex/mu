@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using static mu.LocUtil;
 
 namespace mu
 {
@@ -176,6 +177,50 @@ namespace mu
     public static class Program
     {
         public static void Main()
+        {
+            Console.CursorVisible = false;
+            var MaxY = Console.WindowHeight - 1; 
+            var MaxX = Console.WindowWidth - 1;
+
+            var c = '\0';
+            var h = 0;
+            
+            while ( c != 'q' )
+            {
+                var g = new Grid<int>( MaxY, MaxX, 0 );
+                var middleX = (int)(MaxX / 2);
+                var middleY = (int)(MaxY / 2);
+            
+
+                var m = new Loc( middleX, middleY );
+                var e = new Loc( MaxX - 1, middleY + h );
+                var line = g.Line( m, e ).ToList();
+
+                MyClear(ConsoleColor.Black);
+
+                foreach( var (row, col, val) in line )
+                {
+                    DrawLetter( ' ', col, row, ConsoleColor.White, ConsoleColor.White );
+                }
+
+                var v = Console.ReadKey(true);
+                c = v.KeyChar;
+
+                switch( c )
+                {
+                    case 'h':
+                        h++;
+                        break;
+                    case 'j':
+                        break;
+                    case 'k':
+                        break;
+                    case 'l':
+                        break;
+                }
+            }
+        }
+        public static void Main2()
         {
             Console.CursorVisible = false;
 

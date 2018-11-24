@@ -1,6 +1,6 @@
 
 all : 
-	csc Program.cs -out:Game.exe -t:exe
+	csc Program.cs Grid.cs Distance.cs Location.cs -out:Game.exe -t:exe
 
 test : Test.exe
 	mono Test.exe
