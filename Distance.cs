@@ -3,6 +3,18 @@ using System;
 
 namespace mu
 {
+    public enum Direction
+    {
+        North,
+        NorthEast,
+        East,
+        SouthEast,
+        South,
+        SouthWest,
+        West,
+        NorthWest,
+    }
+
     public class Distance
     {
         public decimal Value { get; }
