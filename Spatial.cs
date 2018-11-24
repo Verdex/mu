@@ -3,6 +3,11 @@ using System;
 
 namespace mu
 {
+    public class Radians
+    {
+        public double Value { get; }
+    }
+
     public enum Direction
     {
         North,

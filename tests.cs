@@ -286,51 +286,6 @@ namespace mu
                 var count = g.SubGridRadius( ToLoc( 3, 3 ), 4).Cells().Count();
                 Check( "Count", count == 49 );
             });
-
-            Test( "Line should get single cell", () =>
-            {
-                var l1 = ToLoc( 5, 4 );
-                var l2 = ToLoc( 5, 4 );
-                var g = new Grid<int>( 10, 10, 77 );
-                g[5, 4] = 1;
-                var singleCell = g.Line( l1, l2 ).Single();
-                Check( "Row", singleCell.row == 5 );
-                Check( "Col", singleCell.col == 4 );
-                Check( "Value", singleCell.value == 1 );
-
-            });
-
-            Test( "Line should get horizontal moving forward", () =>
-            {
-            });
-
-            Test( "Line should get horizontal moving backward", () =>
-            {
-            });
-
-            Test( "Line should get diagonal moving toward Q1", () =>
-            {
-            });
-
-            Test( "Line should get diagonal moving toward Q2", () =>
-            {
-            });
-
-            Test( "Line should get diagonal moving toward Q3", () =>
-            {
-            });
-
-            Test( "Line should get diagonal moving toward Q4", () =>
-            {
-            });
-
-            Test( "Line should get horizontal moving upward", () =>
-            {
-            });
-
-            Test( "Line should get horizontal moving downward", () =>
-            {
-            });
         }
 
         private static string _name;

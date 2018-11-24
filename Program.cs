@@ -176,38 +176,10 @@ namespace mu
 
     public static class Program
     {
-        private enum Z { One, Two, Three, Four }
-
         public static void Main()
         {
             var MaxY = Console.WindowHeight - 1; 
             var MaxX = Console.WindowWidth - 1;
-            var state = Z.One;
-
-            Loc Next( ILoc l )
-            {
-                if ( state == Z.One )
-                {
-                    if ( l.Y < MaxY - 1 )
-                        return new Loc( l.X, l.Y + 1 );
-                    else
-                    {
-                        state = Z.Two;
-                        return new Loc( l.X - 1, l.Y );
-                    } 
-                }
-                else if ( state == Z.Two )
-                {
-                    if ( l.X > 0 )
-                        return new Loc( l.X - 1, l.Y );
-                    else
-                    {
-                        state = Z.Three;
-                        return new Loc( l.X, l.Y - 1 );
-                    } 
-                }
-                return null;
-            }
 
             Console.CursorVisible = false;
 
@@ -215,13 +187,24 @@ namespace mu
             var middleX = (int)(MaxX / 2);
             var middleY = (int)(MaxY / 2);
             var m = new Loc( middleX, middleY );
-            var e = new Loc( MaxX - 1, middleY );
+
+            var dist = 3;
+            var directions = new [] { Direction.North
+                                    , Direction.NorthEast
+                                    , Direction.East
+                                    , Direction.SouthEast
+                                    , Direction.South
+                                    , Direction.SouthWest
+                                    , Direction.West
+                                    , Direction.NorthWest
+                                    };
+            var directionIndex = 0;
             
             while ( c != 'q' )
             {
                 var g = new Grid<int>( MaxY, MaxX, 0 );
 
-                var line = g.Line2( m, e ).ToList();
+                var line = g.Line3( m, directions[directionIndex], new Distance( dist ) ).ToList();
 
                 MyClear(ConsoleColor.Black);
 
@@ -239,11 +222,20 @@ namespace mu
                 switch( c )
                 {
                     case 'h':
-                        e = Next( e ); 
+                        if ( directionIndex >= directions.Length -1 )
+                        {
+                            directionIndex = 0;
+                        }
+                        else
+                        {
+                            directionIndex++;
+                        }
                         break;
-                    case 'j':
+                    case 'd':
+                        dist++;
                         break;
-                    case 'k':
+                    case 'f':
+                        dist--;
                         break;
                     case 'l':
                         break;
