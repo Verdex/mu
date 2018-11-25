@@ -204,7 +204,7 @@ namespace mu
             {
                 var g = new Grid<int>( MaxY, MaxX, 0 );
 
-                var line = g.Line3( m, directions[directionIndex], new Distance( dist ) ).ToList();
+                var line = g.Line( m, directions[directionIndex], new Distance( dist ), 1 ).ToList();
 
                 MyClear(ConsoleColor.Black);
 

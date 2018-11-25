@@ -88,10 +88,8 @@ namespace mu
             return ret;
         }
 
-        /*public IEnumerable<(int row, int col, T value)> Triangle( ILoc center, Direction direction, angle a )
-        {
-        }*/
-
+        // TODO might consider moving line functionality someplace else.  Given an x and y provide a list of xs and ys.
+        // Can also do that with other shapes.
         public IEnumerable<(int row, int col, T value)> Line( ILoc center, Direction direction, Distance distance )
         {
             var dist = decimal.Floor(distance.Value);
