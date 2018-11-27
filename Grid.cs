@@ -20,13 +20,21 @@ namespace mu
         public Grid( int rowCount, int colCount, T init )
             :this( rowCount, colCount )
         {
-            Transfer( (r,c) => init, this );
+            Transfer( loc => init, this );
         }
 
-        public T this[int r, int c]
+        public T this[ILoc loc]
         {
-            get { return _cells[r,c]; }
-            set { _cells[r,c] = value; }
+            get 
+            { 
+                var (row, col) = loc.ToRowCol();
+                return _cells[row,col]; 
+            }
+            set 
+            { 
+                var (row, col) = loc.ToRowCol();
+                _cells[row,col] = value; 
+            }
         }
 
         public int RowCount { get; }
@@ -40,13 +48,14 @@ namespace mu
             }
         }
 
-        public IEnumerable<(int row, int col, T value)> CellsWithIndex()
+        public IEnumerable<(ILoc loc, T value)> CellsWithLoc()
         {
-            for( var r = 0; r < RowCount; r++ )
+            for( var y = 0; y < RowCount; y++ )
             {
-                for( var c = 0; c < ColCount; c++ )
+                for( var x = 0; x < ColCount; x++ )
                 {
-                    yield return (r, c, this[r,c]);
+                    var l = new Loc(x, y);
+                    yield return (l, this[l]);
                 }
             }
         }
@@ -54,19 +63,21 @@ namespace mu
         public Grid<S> Map<S>( Func<T, S> f )
         {
             var ret = new Grid<S>( RowCount, ColCount );
-            Transfer( (r, c) => f( this[r,c] ), ret );
+            Transfer( loc => f( this[loc] ), ret );
             return ret;
         }
 
-        public Grid<(int origRow, int origCol, T origValue)> SubGridRadius( ILoc center, int radius )
+        public Grid<(ILoc origLoc, T origValue)> SubGrid( ILoc startLoc, int rowLength, int colLength)
         {
-            var length = (radius * 2) + 1;
-            var (centerRow, centerCol) = center.ToRowCol();
-            return SubGrid( centerRow - radius, centerCol - radius, length, length );
-        }
+            var (startRow, startCol) = startLoc.ToRowCol();
 
-        public Grid<(int origRow, int origCol, T origValue)> SubGrid( int startRow, int startCol, int rowLength, int colLength)
-        {
+            (ILoc originLoc, T origValue) MoveCell( ILoc loc )
+            {
+                var (r, c) = loc.ToRowCol();
+                var l = new Loc( startRow + r, startCol + c );
+                return (l, this[l]);
+            }
+
             if ( startRow < 0 )
             {
                 startRow = 0;
@@ -83,11 +94,18 @@ namespace mu
             {
                 colLength = ColCount - startCol;
             }
-            var ret = new Grid<(int, int, T)>( rowLength, colLength );
-            Transfer( (r, c) => (startRow + r, startCol + c, this[startRow + r, startCol + c]), ret );
+            var ret = new Grid<(ILoc, T)>( rowLength, colLength );
+            Transfer( MoveCell, ret );
             return ret;
         }
 
+        // TODO probably want to move this into the same place as Line 
+        /*public Grid<(int origRow, int origCol, T origValue)> SubGridRadius( ILoc center, int radius )
+        {
+            var length = (radius * 2) + 1;
+            var (centerRow, centerCol) = center.ToRowCol();
+            return SubGrid( centerRow - radius, centerCol - radius, length, length );
+        }
         // TODO might consider moving line functionality someplace else.  Given an x and y provide a list of xs and ys.
         // Can also do that with other shapes.
         public IEnumerable<(int row, int col, T value)> Line( ILoc center, Direction direction, Distance distance )
@@ -149,21 +167,18 @@ namespace mu
                 default:
                     throw new Exception( $"Missing direction {direction}" );
             }
-        }
+        }*/
 
-        private static void Transfer<S>( Func<int, int, S> src, Grid<S> dest )
+        private static void Transfer<S>( Func<ILoc, S> src, Grid<S> dest )
         {
-            for(var r = 0; r < dest.RowCount; r++)
+            for(var y = 0; y < dest.RowCount; y++)
             {
-                for(var c = 0; c < dest.ColCount; c++)
+                for(var x = 0; x < dest.ColCount; x++)
                 {
-                    dest[r,c] = src(r,c);
+                    var loc = new Loc( x, y );
+                    dest[loc] = src(loc);
                 }
             }
         }
-
-        // all cells between two cells (line)
-        // sub "triangle" subsquare but only take a specific angle of cells
-        //          with some facing
     }
 }
